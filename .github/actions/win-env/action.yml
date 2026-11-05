@@ -1,0 +1,27 @@
+name: Vanta Windows build environment
+description: Python, long paths, and the Windows SDK version Chromium pins (10.0.28000).
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+      with: { python-version: '3.12' }
+    - name: Long paths
+      shell: pwsh
+      run: |
+        git config --global core.longpaths true
+        New-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name LongPathsEnabled -Value 1 -PropertyType DWORD -Force | Out-Null
+    - name: Install Windows SDK 10.0.28000 (+ debugging tools)
+      shell: pwsh
+      run: |
+        $inc = 'C:\Program Files (x86)\Windows Kits\10\Include\10.0.28000.0'
+        if (Test-Path $inc) { Write-Host 'SDK 10.0.28000 already present'; exit 0 }
+        $installer = "$env:TEMP\winsdksetup.exe"
+        Invoke-WebRequest -Uri 'https://download.microsoft.com/download/38ab8f6d-3676-4860-ae84-3361308b9d7f/KIT_BUNDLE_WINDOWSSDK_MEDIACREATION/winsdksetup.exe' -OutFile $installer
+        $sig = Get-AuthenticodeSignature $installer
+        if ($sig.Status -ne 'Valid' -or $sig.SignerCertificate.Subject -notmatch 'O=Microsoft Corporation') { throw "winsdksetup.exe signature check failed: $($sig.Status) $($sig.SignerCertificate.Subject)" }
+        $p = Start-Process -FilePath $installer -ArgumentList '/features OptionId.DesktopCPPx64 OptionId.DesktopCPPx86 OptionId.DesktopCPPArm64 OptionId.WindowsDesktopDebuggers /q /norestart /ceip off' -PassThru -Wait
+        if ($p.ExitCode -ne 0) { throw "winsdksetup.exe failed: $($p.ExitCode)" }
+        if (-not (Test-Path $inc)) { throw 'SDK 10.0.28000 missing after install' }
+    - name: Disk
+      shell: pwsh
+      run: Get-PSDrive -PSProvider FileSystem | Format-Table Name, @{n='FreeGB';e={[math]::Round($_.Free/1GB,1)}}, @{n='UsedGB';e={[math]::Round($_.Used/1GB,1)}}

@@ -1,0 +1,27 @@
+# Vanta engine GN args - Windows x64.
+# Goal: same optimisation as Google Chrome (official build + ThinLTO + PGO, so it does not
+# lag), same web-visible codecs and version string, but no Google API keys/field-trial
+# config baked in and no debug symbols. Safe Browsing stays at its default (on).
+target_cpu = "x64"
+is_official_build = true
+is_debug = false
+is_component_build = false
+dcheck_always_on = false
+chrome_pgo_phase = 2
+symbol_level = 0
+blink_symbol_level = 0
+v8_symbol_level = 0
+treat_warnings_as_errors = false
+use_siso = false
+
+# Web-visible parity with Google Chrome
+proprietary_codecs = true
+ffmpeg_branding = "Chrome"
+use_unofficial_version_number = false
+
+# Privacy: no Google keys, no field-trial testing config
+google_api_key = ""
+google_default_client_id = ""
+google_default_client_secret = ""
+use_official_google_api_keys = false
+disable_fieldtrial_testing_config = true
