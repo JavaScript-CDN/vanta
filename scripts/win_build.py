@@ -109,7 +109,15 @@ def prepare(_args):
         'target_os = ["win"]\n'
         'target_os_only = True\n', encoding="utf-8")
     run([DEPOT / "gclient.bat", "sync", "--no-history", "--shallow", "-D", "--force",
-         "--jobs", "8"], cwd=WORK, env=env)
+         "--nohooks", "--jobs", "8"], cwd=WORK, env=env)
+    # Some hooks (e.g. testing/generate_location_tags.py -> dirmd.exe) call tools from the
+    # in-tree copy src/third_party/depot_tools, whose CIPD binaries are not bootstrapped by
+    # sync. Bootstrap them (same DEPS-pinned commit, no self-update), then run every hook.
+    run(["cmd", "/c", "call cipd_bin_setup.bat"], cwd=SRC / "third_party" / "depot_tools", env=env)
+    dirmd = SRC / "third_party" / "depot_tools" / ".cipd_bin" / "dirmd.exe"
+    if not dirmd.exists():
+        sys.exit(f"{dirmd} missing after CIPD bootstrap")
+    run([DEPOT / "gclient.bat", "runhooks", "--jobs", "8"], cwd=WORK, env=env)
 
     # 4. Drop git metadata; the build itself does not need it (release tarballs have none).
     for git_dir in sorted(SRC.rglob(".git"), key=lambda p: len(p.parts), reverse=True):
