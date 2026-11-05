@@ -1,0 +1,45 @@
+[workspace]
+resolver = "3"
+members = ["crates/*", "src-tauri"]
+default-members = ["crates/*", "src-tauri"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "LicenseRef-Proprietary"
+rust-version = "1.85"
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+uuid = { version = "1", features = ["v7", "serde"] }
+getrandom = "0.4"
+zeroize = { version = "1", features = ["derive"] }
+argon2 = "0.6"
+chacha20poly1305 = "0.11"
+hkdf = "0.13"
+sha2 = "0.11"
+hmac = "0.13"
+subtle = "2"
+base64 = "0.23"
+hex = "0.4"
+rusqlite = { version = "0.41", features = ["bundled-sqlcipher-vendored-openssl"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync", "time", "process", "fs"] }
+reqwest = { version = "0.13", default-features = false, features = ["rustls", "json", "socks"] }
+tracing = "0.1"
+tempfile = "3"
+url = "2"
+core-model = { path = "crates/core-model" }
+core-vault = { path = "crates/core-vault" }
+core-db = { path = "crates/core-db" }
+core-fp = { path = "crates/core-fp" }
+core-proxy = { path = "crates/core-proxy" }
+core-launch = { path = "crates/core-launch" }
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+panic = "abort"
+strip = true
+opt-level = 3

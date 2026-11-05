@@ -1,0 +1,22 @@
+[package]
+name = "core-vault"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+core-model.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+getrandom.workspace = true
+zeroize.workspace = true
+argon2.workspace = true
+chacha20poly1305.workspace = true
+hkdf.workspace = true
+sha2.workspace = true
+hmac.workspace = true
+subtle.workspace = true
+base64.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true

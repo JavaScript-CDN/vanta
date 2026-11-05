@@ -16,8 +16,19 @@ runs:
         $inc = 'C:\Program Files (x86)\Windows Kits\10\Include\10.0.28000.0'
         if (Test-Path $inc) { Write-Host 'SDK 10.0.28000 already present'; exit 0 }
         $installer = "$env:TEMP\winsdksetup.exe"
-        Invoke-WebRequest -Uri 'https://download.microsoft.com/download/38ab8f6d-3676-4860-ae84-3361308b9d7f/KIT_BUNDLE_WINDOWSSDK_MEDIACREATION/winsdksetup.exe' -OutFile $installer
-        $sig = Get-AuthenticodeSignature $installer
+        $sig = $null
+        foreach ($i in 1..5) {
+          Remove-Item $installer -Force -ErrorAction SilentlyContinue
+          try { Invoke-WebRequest -Uri 'https://download.microsoft.com/download/38ab8f6d-3676-4860-ae84-3361308b9d7f/KIT_BUNDLE_WINDOWSSDK_MEDIACREATION/winsdksetup.exe' -OutFile $installer -UseBasicParsing } catch { Write-Host "download attempt $i error: $_" }
+          if (Test-Path $installer) {
+            Write-Host "attempt ${i}: size $((Get-Item $installer).Length)"
+            $sig = Get-AuthenticodeSignature $installer
+            if ($sig.Status -eq 'Valid') { break }
+            Write-Host "attempt ${i}: signature $($sig.Status)"
+          }
+          Start-Sleep -Seconds (10 * $i)
+        }
+        if ($null -eq $sig) { throw 'winsdksetup.exe download failed' }
         if ($sig.Status -ne 'Valid' -or $sig.SignerCertificate.Subject -notmatch 'O=Microsoft Corporation') { throw "winsdksetup.exe signature check failed: $($sig.Status) $($sig.SignerCertificate.Subject)" }
         $p = Start-Process -FilePath $installer -ArgumentList '/features OptionId.DesktopCPPx64 OptionId.DesktopCPPx86 OptionId.DesktopCPPArm64 OptionId.WindowsDesktopDebuggers /q /norestart /ceip off' -PassThru -Wait
         if ($p.ExitCode -ne 0) { throw "winsdksetup.exe failed: $($p.ExitCode)" }

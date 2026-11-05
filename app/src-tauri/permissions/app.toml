@@ -1,0 +1,37 @@
+[[set]]
+identifier = "allow-app-commands"
+description = "All Vanta commands used by the main window."
+permissions = [
+  "allow-vault-status",
+  "allow-vault-create",
+  "allow-vault-unlock",
+  "allow-vault-unlock-recovery",
+  "allow-vault-lock",
+  "allow-vault-change-password",
+  "allow-profiles-query",
+  "allow-profiles-count",
+  "allow-profile-get",
+  "allow-profiles-ids-for",
+  "allow-profile-create",
+  "allow-profile-update",
+  "allow-profiles-trash",
+  "allow-bulk-create",
+  "allow-proxies-list",
+  "allow-proxies-parse",
+  "allow-proxy-upsert",
+  "allow-proxies-delete",
+  "allow-proxy-check",
+  "allow-folders-list",
+  "allow-folder-upsert",
+  "allow-folder-delete",
+  "allow-tags-list",
+  "allow-tag-upsert",
+  "allow-tag-delete",
+  "allow-launch-profiles",
+  "allow-stop-profiles",
+  "allow-resource-snapshot",
+  "allow-settings-get",
+  "allow-setting-set",
+  "allow-logs-query",
+  "allow-engine-info"
+]

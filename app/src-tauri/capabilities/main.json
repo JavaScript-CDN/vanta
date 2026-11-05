@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "main",
+  "description": "Main window: core events only + Vanta's own commands. No fs/shell/http plugins are exposed to the WebView.",
+  "windows": ["main"],
+  "permissions": ["core:event:default", "core:window:default", "allow-app-commands"]
+}

@@ -1,0 +1,20 @@
+[package]
+name = "core-db"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+core-model.workspace = true
+core-vault.workspace = true
+core-fp.workspace = true
+rusqlite.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+uuid.workspace = true
+hex.workspace = true
+getrandom.workspace = true
+zeroize.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
