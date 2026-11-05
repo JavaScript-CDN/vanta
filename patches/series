@@ -1,0 +1,3 @@
+# Vanta engine patch series. One patch file per line, applied in order with
+# `patch -p1` from the Chromium src/ root. Lines starting with # are ignored.
+# Patches must be rebased onto engine/chromium_version.txt.
