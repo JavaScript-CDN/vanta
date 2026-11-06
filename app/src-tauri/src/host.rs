@@ -2,10 +2,8 @@
 use core_fp::{GpuVendorClass, HostMonitor, HostProfile};
 
 pub fn probe(monitors: Vec<HostMonitor>) -> HostProfile {
-    let mut sys = sysinfo::System::new();
-    sys.refresh_memory();
     let cores = std::thread::available_parallelism().map(|n| n.get() as u32).unwrap_or(4);
-    let mem_gb = sys.total_memory() as f64 / (1024.0 * 1024.0 * 1024.0);
+    let mem_gb = total_memory_bytes() as f64 / (1024.0 * 1024.0 * 1024.0);
     let (os_family, os_version) = os();
     let (vendor, name) = gpu();
     let render_class = format!("{}/{}", if os_family == "windows" { "d3d11" } else { "gl" }, vendor.as_str());
@@ -59,3 +57,16 @@ fn has_battery() -> bool {
 }
 #[cfg(not(windows))]
 fn has_battery() -> bool { std::path::Path::new("/sys/class/power_supply/BAT0").exists() }
+
+/// sysinfo's constructor API differs between releases; isolate it here.
+fn total_memory_bytes() -> u64 {
+    #[allow(clippy::needless_question_mark)]
+    let sys = sysinfo::System::new();
+    total_of(sys)
+}
+trait IntoSys { fn into_sys(self) -> Option<sysinfo::System>; }
+impl IntoSys for sysinfo::System { fn into_sys(self) -> Option<sysinfo::System> { Some(self) } }
+impl<E> IntoSys for Result<sysinfo::System, E> { fn into_sys(self) -> Option<sysinfo::System> { self.ok() } }
+fn total_of(x: impl IntoSys) -> u64 {
+    match x.into_sys() { Some(mut s) => { s.refresh_memory(); s.total_memory() } None => 8 * 1024 * 1024 * 1024 }
+}

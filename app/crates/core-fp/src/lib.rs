@@ -17,7 +17,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 
-pub use host::{GpuVendorClass, HostProfile};
+pub use host::{GpuVendorClass, HostMonitor, HostProfile};
 pub use seeds::Seeds;
 pub use validate::{Issue, Report, Severity};
 

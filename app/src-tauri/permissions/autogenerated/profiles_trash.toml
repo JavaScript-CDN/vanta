@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-profiles-trash"
+description = "Enables the profiles_trash command without any pre-configured scope."
+commands.allow = ["profiles_trash"]
+
+[[permission]]
+identifier = "deny-profiles-trash"
+description = "Denies the profiles_trash command without any pre-configured scope."
+commands.deny = ["profiles_trash"]

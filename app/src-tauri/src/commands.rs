@@ -114,6 +114,10 @@ pub async fn profile_update(s: State<'_, AppState>, id: ProfileId, patch: Profil
     profile_get(s, id).await
 }
 #[tauri::command]
+pub async fn profiles_restore(s: State<'_, AppState>, ids: Vec<ProfileId>) -> R<()> {
+    s.with_db(|db| db.profiles_restore(&ids)).await
+}
+#[tauri::command]
 pub async fn profiles_trash(s: State<'_, AppState>, ids: Vec<ProfileId>) -> R<()> {
     s.with_db(|db| db.profiles_trash(&ids)).await
 }
@@ -162,6 +166,25 @@ pub async fn proxies_parse(text: String, default_kind: Option<ProxyKind>) -> R<s
     serde_json::to_value(list).map_err(|_| AppError::Internal)
 }
 
+/// Parse a pasted list and store every valid line (passwords sealed with K_secrets). Returns the count.
+#[tauri::command]
+pub async fn proxies_import(s: State<'_, AppState>, text: String, default_kind: Option<ProxyKind>) -> R<usize> {
+    let list = core_proxy::parse_list(&text, default_kind.unwrap_or(ProxyKind::Http));
+    let vault = s.vault.read().await;
+    let u = vault.require_unlocked()?;
+    let existing: std::collections::HashSet<(String, u16, Option<String>)> = s.with_db(|db| db.proxies_list()).await?
+        .into_iter().map(|p| (p.host.unwrap_or_default(), p.port.unwrap_or(0), p.username)).collect();
+    let mut n = 0;
+    for p in list.items {
+        if existing.contains(&(p.host.clone(), p.port, p.username.clone())) { continue; }
+        let draft = ProxyDraft { id: None, label: None, kind: p.kind, host: p.host, port: p.port, username: p.username, password: p.password, rotate_url: None };
+        let seal = |ctx: &str, pt: &[u8]| u.seal_secret(&format!("proxy:{ctx}"), pt);
+        s.with_db(|db| db.proxy_upsert(&draft, seal)).await?;
+        n += 1;
+    }
+    Ok(n)
+}
+
 #[tauri::command]
 pub async fn proxy_upsert(s: State<'_, AppState>, draft: ProxyDraft) -> R<Proxy> {
     let id = {
@@ -192,7 +215,7 @@ pub async fn proxy_check(s: State<'_, AppState>, id: ProxyId) -> R<ProxyCheckRes
         }
         None => None,
     };
-    let echo = s.with_db(|db| db.setting_get("proxy_echo_url").map(|o| o.and_then(|v| v.as_str().map(String::from)))).await?.flatten()
+    let echo = s.with_db(|db| db.setting_get("proxy_echo_url").map(|o| o.and_then(|v| v.as_str().map(String::from)))).await?
         .unwrap_or_else(|| core_proxy::DEFAULT_ECHO.to_string());
     let ua = format!("Mozilla/5.0 ({}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{}.0.0.0 Safari/537.36",
         if s.host.os_family == "windows" { "Windows NT 10.0; Win64; x64" } else { "X11; Linux x86_64" }, s.engine.major);
@@ -259,7 +282,10 @@ pub async fn logs_query(s: State<'_, AppState>, category: Option<String>, page: 
 }
 #[tauri::command]
 pub async fn engine_info(s: State<'_, AppState>) -> R<serde_json::Value> {
+    let configured = s.with_db(|db| db.setting_get("enginePath")).await.ok().flatten().and_then(|v| v.as_str().map(String::from));
+    let path = crate::launch::engine_exe(&s, configured);
     Ok(serde_json::json!({ "engineVersion": s.engine.full, "engineMajor": s.engine.major,
+        "enginePath": path.display().to_string(), "engineInstalled": path.exists(),
         "host": { "osFamily": s.host.os_family, "osVersion": s.host.os_version, "gpu": s.host.gpu_label(),
                   "cores": s.host.logical_cores, "memGb": s.host.physical_mem_gb } }))
 }

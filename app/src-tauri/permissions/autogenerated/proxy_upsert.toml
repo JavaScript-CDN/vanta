@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-proxy-upsert"
+description = "Enables the proxy_upsert command without any pre-configured scope."
+commands.allow = ["proxy_upsert"]
+
+[[permission]]
+identifier = "deny-proxy-upsert"
+description = "Denies the proxy_upsert command without any pre-configured scope."
+commands.deny = ["proxy_upsert"]

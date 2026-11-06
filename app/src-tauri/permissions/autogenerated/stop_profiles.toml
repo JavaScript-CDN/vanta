@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-stop-profiles"
+description = "Enables the stop_profiles command without any pre-configured scope."
+commands.allow = ["stop_profiles"]
+
+[[permission]]
+identifier = "deny-stop-profiles"
+description = "Denies the stop_profiles command without any pre-configured scope."
+commands.deny = ["stop_profiles"]

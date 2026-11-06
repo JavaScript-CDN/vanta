@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-proxies-import"
+description = "Enables the proxies_import command without any pre-configured scope."
+commands.allow = ["proxies_import"]
+
+[[permission]]
+identifier = "deny-proxies-import"
+description = "Denies the proxies_import command without any pre-configured scope."
+commands.deny = ["proxies_import"]

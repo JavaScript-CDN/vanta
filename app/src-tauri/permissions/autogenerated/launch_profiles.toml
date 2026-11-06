@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-launch-profiles"
+description = "Enables the launch_profiles command without any pre-configured scope."
+commands.allow = ["launch_profiles"]
+
+[[permission]]
+identifier = "deny-launch-profiles"
+description = "Denies the launch_profiles command without any pre-configured scope."
+commands.deny = ["launch_profiles"]

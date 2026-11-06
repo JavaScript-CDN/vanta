@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-bulk-create"
+description = "Enables the bulk_create command without any pre-configured scope."
+commands.allow = ["bulk_create"]
+
+[[permission]]
+identifier = "deny-bulk-create"
+description = "Denies the bulk_create command without any pre-configured scope."
+commands.deny = ["bulk_create"]

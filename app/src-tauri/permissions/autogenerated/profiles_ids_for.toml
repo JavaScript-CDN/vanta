@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-profiles-ids-for"
+description = "Enables the profiles_ids_for command without any pre-configured scope."
+commands.allow = ["profiles_ids_for"]
+
+[[permission]]
+identifier = "deny-profiles-ids-for"
+description = "Denies the profiles_ids_for command without any pre-configured scope."
+commands.deny = ["profiles_ids_for"]

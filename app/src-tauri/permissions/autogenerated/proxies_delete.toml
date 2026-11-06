@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-proxies-delete"
+description = "Enables the proxies_delete command without any pre-configured scope."
+commands.allow = ["proxies_delete"]
+
+[[permission]]
+identifier = "deny-proxies-delete"
+description = "Denies the proxies_delete command without any pre-configured scope."
+commands.deny = ["proxies_delete"]

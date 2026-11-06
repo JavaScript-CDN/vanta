@@ -147,6 +147,10 @@ impl Db {
         if let Some(v) = &patch.start_urls { set!("start_urls", serde_json::to_string(v).unwrap()); }
         if let Some(v) = patch.block_launch_on_mismatch { set!("block_launch_on_mismatch", v as i64); }
         if let Some(v) = patch.webrtc_mode { set!("webrtc_mode", v.as_str()); }
+        if let Some(v) = patch.geo_mode { set!("geo_mode", v.as_str()); }
+        if let Some(v) = patch.dns_mode { set!("dns_mode", v.as_str()); }
+        if let Some(v) = patch.ipv6_mode { set!("ipv6_mode", v.as_str()); }
+        if let Some(v) = &patch.fp_overrides { set!("fp_overrides", v.to_string()); }
         if let Some(v) = patch.ram_limit_mb { set!("ram_limit_mb", v); }
         if let Some(v) = patch.cpu_limit_pct { set!("cpu_limit_pct", v); }
         if let Some(tags) = &patch.tag_ids {
@@ -195,6 +199,13 @@ impl Db {
     pub fn set_geo(&self, id: &str, tz: Option<&str>, langs: &[String], lat: Option<f64>, lon: Option<f64>, country: Option<&str>) -> CmdResult<()> {
         self.conn().execute("UPDATE profiles SET timezone=?1, languages=?2, geo_lat=?3, geo_lon=?4, geo_accuracy_m=1500, last_exit_country=?5, updated_at=?6 WHERE id=?7",
             params![tz, serde_json::to_string(langs).unwrap(), lat, lon, country, now_ms(), id]).map(|_| ()).map_err(sql_err)
+    }
+
+    pub fn profiles_restore(&self, ids: &[String]) -> CmdResult<()> {
+        let mut conn = self.conn();
+        let tx = conn.transaction().map_err(sql_err)?;
+        for id in ids { tx.execute("UPDATE profiles SET deleted_at=NULL, updated_at=?1 WHERE id=?2", params![now_ms(), id]).map_err(sql_err)?; }
+        tx.commit().map_err(sql_err)
     }
 
     pub fn set_status(&self, id: &str, status: ProfileStatus) -> CmdResult<()> {
