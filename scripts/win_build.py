@@ -25,7 +25,7 @@ import zipfile
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-WORK = Path(os.environ.get("VANTA_WORK", r"C:\v"))   # short path: avoids MAX_PATH issues
+WORK = Path(os.environ.get("VANTA_WORK", r"D:\v"))   # short path: avoids MAX_PATH issues
 SRC = WORK / "src"
 OUT = SRC / "out" / "Default"
 DEPOT = WORK / "depot_tools"
