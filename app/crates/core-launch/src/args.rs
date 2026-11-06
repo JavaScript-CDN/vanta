@@ -41,7 +41,8 @@ pub fn build_args(s: &LaunchSpec) -> Vec<String> {
         let l = u.trim().to_ascii_lowercase();
         if l.starts_with("https://") || l.starts_with("http://") { a.push(u.trim().to_string()); }
     }
-    debug_assert!(a.iter().all(|x| !FORBIDDEN.iter().any(|f| x.starts_with(f))));
+    // Hard filter in release builds too, not only a debug assertion.
+    a.retain(|x| !FORBIDDEN.iter().any(|f| x.starts_with(f)));
     a
 }
 

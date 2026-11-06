@@ -60,8 +60,12 @@ jobs:
 
       - name: Release gate - no remote debugging / automation switches in the launcher
         run: |
-          $hits = Select-String -Path crates/core-launch/src/args.rs -Pattern '"--remote-debugging-port','"--remote-debugging-pipe','"--enable-automation' -SimpleMatch
+          # The deny-list constant (FORBIDDEN) is the only place these strings may appear.
+          $hits = Get-ChildItem -Recurse -Include *.rs crates, src-tauri/src |
+            Select-String -Pattern '--remote-debugging','--enable-automation','--remote-allow-origins' -SimpleMatch |
+            Where-Object { $_.Line -notmatch 'FORBIDDEN' -and $_.Line -notmatch '^\s*//' }
           if ($hits) { $hits; throw "forbidden switch found" }
+          cargo test -p core-launch --locked no_debug_switches
 
       - name: Install Tauri CLI
         run: cargo install tauri-cli --version "^2.12" --locked
