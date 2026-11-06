@@ -76,7 +76,7 @@ async fn handle(mut c: TcpStream, up: &Upstream, block_ipv6: bool, st: &Stats) -
     if r[1] != 1 {
         // Only CONNECT. UDP ASSOCIATE / BIND refused → no UDP path around the proxy.
         st.blocked.fetch_add(1, Ordering::Relaxed);
-        reply(&mut c, 7).await?;
+        refuse(&mut c, 7).await;
         return Ok(());
     }
     let target = match r[3] {
@@ -86,20 +86,31 @@ async fn handle(mut c: TcpStream, up: &Upstream, block_ipv6: bool, st: &Stats) -
                Target::Domain(String::from_utf8(d).map_err(|_| bad())?, port) }
         4 => { let mut a = [0u8; 18]; c.read_exact(&mut a).await?; let mut ip = [0u8; 16]; ip.copy_from_slice(&a[..16]);
                Target::V6(Ipv6Addr::from(ip), u16::from_be_bytes([a[16], a[17]])) }
-        _ => { reply(&mut c, 8).await?; return Err(bad()); }
+        _ => { refuse(&mut c, 8).await; return Err(bad()); }
     };
     if block_ipv6 && matches!(target, Target::V6(..)) {
         st.blocked.fetch_add(1, Ordering::Relaxed);
-        reply(&mut c, 2).await?;
+        refuse(&mut c, 2).await;
         return Ok(());
     }
     let upstream = match timeout(Duration::from_secs(20), connect_upstream(up, &target)).await {
         Ok(Ok(s)) => s,
-        _ => { reply(&mut c, 1).await?; return Err(bad()); }   // fail closed
+        _ => { refuse(&mut c, 1).await; return Err(bad()); }   // fail closed
     };
     reply(&mut c, 0).await?;
     let (mut a, mut b) = (c, upstream);
     tokio::io::copy_bidirectional(&mut a, &mut b).await.map(|_| ())
+}
+
+/// Send a failure reply and close gracefully: half-close, then drain what the client already sent
+/// (bounded), so Windows doesn't turn the close into a RST that destroys the reply in flight.
+async fn refuse(c: &mut TcpStream, code: u8) {
+    if reply(c, code).await.is_err() { return; }
+    let _ = c.shutdown().await;
+    let mut sink = [0u8; 512];
+    let _ = tokio::time::timeout(std::time::Duration::from_millis(500), async {
+        while let Ok(n) = c.read(&mut sink).await { if n == 0 { break; } }
+    }).await;
 }
 
 async fn reply(c: &mut TcpStream, code: u8) -> std::io::Result<()> { c.write_all(&[5, code, 0, 1, 0, 0, 0, 0, 0, 0]).await }
