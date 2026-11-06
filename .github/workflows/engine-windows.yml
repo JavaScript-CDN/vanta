@@ -38,7 +38,8 @@ jobs:
         if: steps.build.outputs.status == 'running'
         run: |
           7z a -tzip D:\tree.zip D:\v\src D:\v\depot_tools D:\v\.gclient -mx=3 -mtc=on -mmt=on -bso0 -bsp0
-          if ($LASTEXITCODE -ne 0) { throw "7z failed" }
+          if ($LASTEXITCODE -gt 1) { throw "7z failed: $LASTEXITCODE" }  # 1 = warnings (dangling links), tolerated
+          $global:LASTEXITCODE = 0
           Get-Item D:\tree.zip | Select-Object Name, @{n='GB';e={[math]::Round($_.Length/1GB,2)}}
       - name: Upload build tree
         if: steps.build.outputs.status == 'running'
@@ -86,7 +87,8 @@ jobs:
         if: steps.build.outputs.status == 'running'
         run: |
           7z a -tzip D:\tree.zip D:\v\src D:\v\depot_tools D:\v\.gclient -mx=3 -mtc=on -mmt=on -bso0 -bsp0
-          if ($LASTEXITCODE -ne 0) { throw "7z failed" }
+          if ($LASTEXITCODE -gt 1) { throw "7z failed: $LASTEXITCODE" }  # 1 = warnings (dangling links), tolerated
+          $global:LASTEXITCODE = 0
           Get-Item D:\tree.zip | Select-Object Name, @{n='GB';e={[math]::Round($_.Length/1GB,2)}}
       - name: Upload build tree
         if: steps.build.outputs.status == 'running'
@@ -134,7 +136,8 @@ jobs:
         if: steps.build.outputs.status == 'running'
         run: |
           7z a -tzip D:\tree.zip D:\v\src D:\v\depot_tools D:\v\.gclient -mx=3 -mtc=on -mmt=on -bso0 -bsp0
-          if ($LASTEXITCODE -ne 0) { throw "7z failed" }
+          if ($LASTEXITCODE -gt 1) { throw "7z failed: $LASTEXITCODE" }  # 1 = warnings (dangling links), tolerated
+          $global:LASTEXITCODE = 0
           Get-Item D:\tree.zip | Select-Object Name, @{n='GB';e={[math]::Round($_.Length/1GB,2)}}
       - name: Upload build tree
         if: steps.build.outputs.status == 'running'
@@ -182,7 +185,8 @@ jobs:
         if: steps.build.outputs.status == 'running'
         run: |
           7z a -tzip D:\tree.zip D:\v\src D:\v\depot_tools D:\v\.gclient -mx=3 -mtc=on -mmt=on -bso0 -bsp0
-          if ($LASTEXITCODE -ne 0) { throw "7z failed" }
+          if ($LASTEXITCODE -gt 1) { throw "7z failed: $LASTEXITCODE" }  # 1 = warnings (dangling links), tolerated
+          $global:LASTEXITCODE = 0
           Get-Item D:\tree.zip | Select-Object Name, @{n='GB';e={[math]::Round($_.Length/1GB,2)}}
       - name: Upload build tree
         if: steps.build.outputs.status == 'running'
@@ -230,7 +234,8 @@ jobs:
         if: steps.build.outputs.status == 'running'
         run: |
           7z a -tzip D:\tree.zip D:\v\src D:\v\depot_tools D:\v\.gclient -mx=3 -mtc=on -mmt=on -bso0 -bsp0
-          if ($LASTEXITCODE -ne 0) { throw "7z failed" }
+          if ($LASTEXITCODE -gt 1) { throw "7z failed: $LASTEXITCODE" }  # 1 = warnings (dangling links), tolerated
+          $global:LASTEXITCODE = 0
           Get-Item D:\tree.zip | Select-Object Name, @{n='GB';e={[math]::Round($_.Length/1GB,2)}}
       - name: Upload build tree
         if: steps.build.outputs.status == 'running'
@@ -278,7 +283,8 @@ jobs:
         if: steps.build.outputs.status == 'running'
         run: |
           7z a -tzip D:\tree.zip D:\v\src D:\v\depot_tools D:\v\.gclient -mx=3 -mtc=on -mmt=on -bso0 -bsp0
-          if ($LASTEXITCODE -ne 0) { throw "7z failed" }
+          if ($LASTEXITCODE -gt 1) { throw "7z failed: $LASTEXITCODE" }  # 1 = warnings (dangling links), tolerated
+          $global:LASTEXITCODE = 0
           Get-Item D:\tree.zip | Select-Object Name, @{n='GB';e={[math]::Round($_.Length/1GB,2)}}
       - name: Upload build tree
         if: steps.build.outputs.status == 'running'
@@ -326,7 +332,8 @@ jobs:
         if: steps.build.outputs.status == 'running'
         run: |
           7z a -tzip D:\tree.zip D:\v\src D:\v\depot_tools D:\v\.gclient -mx=3 -mtc=on -mmt=on -bso0 -bsp0
-          if ($LASTEXITCODE -ne 0) { throw "7z failed" }
+          if ($LASTEXITCODE -gt 1) { throw "7z failed: $LASTEXITCODE" }  # 1 = warnings (dangling links), tolerated
+          $global:LASTEXITCODE = 0
           Get-Item D:\tree.zip | Select-Object Name, @{n='GB';e={[math]::Round($_.Length/1GB,2)}}
       - name: Upload build tree
         if: steps.build.outputs.status == 'running'
@@ -374,7 +381,8 @@ jobs:
         if: steps.build.outputs.status == 'running'
         run: |
           7z a -tzip D:\tree.zip D:\v\src D:\v\depot_tools D:\v\.gclient -mx=3 -mtc=on -mmt=on -bso0 -bsp0
-          if ($LASTEXITCODE -ne 0) { throw "7z failed" }
+          if ($LASTEXITCODE -gt 1) { throw "7z failed: $LASTEXITCODE" }  # 1 = warnings (dangling links), tolerated
+          $global:LASTEXITCODE = 0
           Get-Item D:\tree.zip | Select-Object Name, @{n='GB';e={[math]::Round($_.Length/1GB,2)}}
       - name: Upload build tree
         if: steps.build.outputs.status == 'running'
@@ -422,7 +430,8 @@ jobs:
         if: steps.build.outputs.status == 'running'
         run: |
           7z a -tzip D:\tree.zip D:\v\src D:\v\depot_tools D:\v\.gclient -mx=3 -mtc=on -mmt=on -bso0 -bsp0
-          if ($LASTEXITCODE -ne 0) { throw "7z failed" }
+          if ($LASTEXITCODE -gt 1) { throw "7z failed: $LASTEXITCODE" }  # 1 = warnings (dangling links), tolerated
+          $global:LASTEXITCODE = 0
           Get-Item D:\tree.zip | Select-Object Name, @{n='GB';e={[math]::Round($_.Length/1GB,2)}}
       - name: Upload build tree
         if: steps.build.outputs.status == 'running'
@@ -470,7 +479,8 @@ jobs:
         if: steps.build.outputs.status == 'running'
         run: |
           7z a -tzip D:\tree.zip D:\v\src D:\v\depot_tools D:\v\.gclient -mx=3 -mtc=on -mmt=on -bso0 -bsp0
-          if ($LASTEXITCODE -ne 0) { throw "7z failed" }
+          if ($LASTEXITCODE -gt 1) { throw "7z failed: $LASTEXITCODE" }  # 1 = warnings (dangling links), tolerated
+          $global:LASTEXITCODE = 0
           Get-Item D:\tree.zip | Select-Object Name, @{n='GB';e={[math]::Round($_.Length/1GB,2)}}
       - name: Upload build tree
         if: steps.build.outputs.status == 'running'
@@ -518,7 +528,8 @@ jobs:
         if: steps.build.outputs.status == 'running'
         run: |
           7z a -tzip D:\tree.zip D:\v\src D:\v\depot_tools D:\v\.gclient -mx=3 -mtc=on -mmt=on -bso0 -bsp0
-          if ($LASTEXITCODE -ne 0) { throw "7z failed" }
+          if ($LASTEXITCODE -gt 1) { throw "7z failed: $LASTEXITCODE" }  # 1 = warnings (dangling links), tolerated
+          $global:LASTEXITCODE = 0
           Get-Item D:\tree.zip | Select-Object Name, @{n='GB';e={[math]::Round($_.Length/1GB,2)}}
       - name: Upload build tree
         if: steps.build.outputs.status == 'running'
@@ -566,7 +577,8 @@ jobs:
         if: steps.build.outputs.status == 'running'
         run: |
           7z a -tzip D:\tree.zip D:\v\src D:\v\depot_tools D:\v\.gclient -mx=3 -mtc=on -mmt=on -bso0 -bsp0
-          if ($LASTEXITCODE -ne 0) { throw "7z failed" }
+          if ($LASTEXITCODE -gt 1) { throw "7z failed: $LASTEXITCODE" }  # 1 = warnings (dangling links), tolerated
+          $global:LASTEXITCODE = 0
           Get-Item D:\tree.zip | Select-Object Name, @{n='GB';e={[math]::Round($_.Length/1GB,2)}}
       - name: Upload build tree
         if: steps.build.outputs.status == 'running'
